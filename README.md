@@ -1,6 +1,8 @@
 # Wördle
 
-![Wördle Screenshots](screenshots/wördle_ss.png)
+<p align="center">
+  <img src="screenshots/wördle_ss.png" alt="Wördle Gameplay" width="300">
+</p>
 
 A clean, responsive, standalone Flutter web implementation of the classic word-guessing game, completely localized for 5-letter German nouns. Playable on web browsers with a mobile-first design.
 
