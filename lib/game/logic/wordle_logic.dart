@@ -5,6 +5,7 @@ import 'package:wordle/game/data/repositories/wordle_word_repo.dart';
 import '../data/services/wordle_coins_service.dart';
 import 'wordle_hints_service.dart';
 
+/// Orchestrates the core game rules, progression, and economy interactions.
 class WordleLogic {
   final WordleWordRepo repository;
   final WordleCoinsService coinsService;
@@ -16,7 +17,7 @@ class WordleLogic {
     required this.hintsService,
   });
 
-  // initial game state
+  /// Initializes and returns a fresh [WordleGameState] instance.
   Future<WordleGameState> createNewGame() async {
     await repository.ready;
 
@@ -31,7 +32,9 @@ class WordleLogic {
     );
   }
 
-  // process guess + return update game sync
+  /// Evaluates a user [guess] against the active game [state].
+  ///
+  /// Returns an updated [WordleGameState] preserving immutability.
   Future<WordleGameState> makeGuess(WordleGameState state, String guess) async {
     if (state.isGameOver || !state.canGuess) {
       return state;
@@ -39,25 +42,20 @@ class WordleLogic {
 
     final uppercaseGuess = guess.toUpperCase();
 
-    // validate length
     if (uppercaseGuess.length != state.targetWord.length) {
       return state;
     }
 
-    // valid word in dict.
     final isValid = await repository.isValidWord(uppercaseGuess);
     if (!isValid) {
       return state;
     }
 
-    // check guess against target word
     final matches = checkWord(state.targetWord, uppercaseGuess);
     final newGuess = WordGuess(word: uppercaseGuess, matches: matches);
 
-    // add new guess to list of guesses
     final newGuesses = List<WordGuess>.from(state.guesses)..add(newGuess);
 
-    // win or lose
     GameStatus newStatus = state.status;
     DateTime? newEndTime = state.endTime;
     int coinsEarnedThisGame = state.coinsEarnedThisGame;
@@ -66,7 +64,6 @@ class WordleLogic {
       newStatus = GameStatus.won;
       newEndTime = DateTime.now();
 
-      // calculate and give coins
       final coinsEarned = calculateCoinsEarned(newGuesses.length);
       final noHintsBonus = state.hintsUsed == 0 ? 5 : 0;
       final totalCoinsEarned = coinsEarned + noHintsBonus;
@@ -86,7 +83,7 @@ class WordleLogic {
     );
   }
 
-  // ensure word implementation remains the same
+  /// Generates a list of [LetterMatch] states comparing [guess] to [target].
   List<LetterMatch> checkWord(String target, String guess) {
     if (target.length != guess.length) {
       throw ArgumentError('target and guess must be the same length');
@@ -96,13 +93,11 @@ class WordleLogic {
     final guessChars = guess.toUpperCase().split('');
     final results = List<LetterMatch>.filled(guess.length, LetterMatch.absent);
 
-    // count available letters in target word
     final availableLetters = <String, int>{};
     for (final char in targetChars) {
       availableLetters[char] = (availableLetters[char] ?? 0) + 1;
     }
 
-    // first pass: mark correct positions and update available letters
     for (var i = 0; i < guess.length; i++) {
       if (guessChars[i] == targetChars[i]) {
         results[i] = LetterMatch.correct;
@@ -110,9 +105,7 @@ class WordleLogic {
       }
     }
 
-    // second pass: mark present letters based on remaining available letter
     for (var i = 0; i < guess.length; i++) {
-      // skip correct positions
       if (results[i] == LetterMatch.correct) continue;
 
       final letter = guessChars[i];
@@ -126,24 +119,20 @@ class WordleLogic {
     return results;
   }
 
-  // use hint
+  /// Deducts coins and reveals a random letter position if affordable.
   Future<WordleGameState?> useHint(
       WordleGameState state, int hintNumber) async {
     if (!state.canGuess || state.hintsUsed >= state.maxHints) return null;
 
-    // can player afford hint?
     final cost = hintsService.getHintCost(hintNumber);
     if (!coinsService.canAfford(cost)) return null;
 
-    // random position to reveal
     final positionToReveal = hintsService.getRandomHintPosition(state);
     if (positionToReveal == -1) return null;
 
-    // spend coins
     final success = await coinsService.spendCoins(cost);
     if (!success) return null;
 
-    // update game state with hint
     final newRevealedPositions = List<int>.from(state.revealedPositions)
       ..add(positionToReveal);
 
@@ -154,14 +143,14 @@ class WordleLogic {
     );
   }
 
-  // coins earned
+  /// Calculates the coin reward based on the number of [attempts].
   int calculateCoinsEarned(int attempts) {
     const coinValues = [50, 40, 30, 20, 10, 5];
     if (attempts <= 0 || attempts > 6) return 0;
     return coinValues[attempts - 1];
   }
 
-  // coin balance + can afford
+  /// Retrieves the current available coin balance.
   int getCurrentCoins() {
     return coinsService.getCoinsData().totalCoins;
   }
@@ -171,7 +160,7 @@ class WordleLogic {
     return coinsService.canAfford(cost);
   }
 
-  // solution feedback
+  /// Returns localized feedback text based on the performance in [state].
   String winFeedback(WordleGameState state) {
     final attempts = state.guesses.length;
 
@@ -190,7 +179,7 @@ class WordleLogic {
     }
   }
 
-  // check article
+  /// Evaluates whether the [selectedArticle] matches the target word.
   Future<bool> checkArticle(
       WordleGameState state, String selectedArticle) async {
     final correctArticle = await repository.getWordArticle(state.targetWord);
@@ -198,7 +187,7 @@ class WordleLogic {
   }
 }
 
-// provider
+/// Provides a singleton injection of the [WordleLogic] orchestrator.
 final wordleLogicProvider = Provider<WordleLogic>((ref) {
   final repository = ref.watch(wordleWordRepoProvider);
   final coinsService = ref.watch(wordleCoinsServiceProvider);

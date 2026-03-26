@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+/// Handles loading, caching, and querying the internal dictionary of 5-letter nouns.
 class WordleWordRepo {
   static const _cacheKey = 'wordle_five_letter_nouns';
   static const _assetPath = 'assets/data/german_nouns.csv';
@@ -36,12 +37,10 @@ class WordleWordRepo {
   }
 
   Future<void> _loadFromCsv() async {
-    // Try loading from SharedPreferences cache first
     final prefs = await SharedPreferences.getInstance();
     final cached = prefs.getStringList(_cacheKey);
 
     if (cached != null && cached.isNotEmpty) {
-      // Parse cached entries (stored as "article|noun|plural|english")
       for (final entry in cached) {
         final parts = entry.split('|');
         if (parts.length >= 4) {
@@ -56,7 +55,6 @@ class WordleWordRepo {
       if (_cachedWords.isNotEmpty) return;
     }
 
-    // Load from CSV asset
     final raw = await rootBundle.loadString(_assetPath);
     final lines = raw.split('\n');
 
@@ -87,7 +85,6 @@ class WordleWordRepo {
       cacheEntries.add('$article|$noun|$plural|$english');
     }
 
-    // Cache for next time
     if (cacheEntries.isNotEmpty) {
       await prefs.setStringList(_cacheKey, cacheEntries);
     }
@@ -103,7 +100,7 @@ class WordleWordRepo {
     return initialize();
   }
 
-  // get a random word
+  /// Retrieves a random 5-letter [word] entry from the dictionary.
   Future<Map<String, String>> getRandomWord() async {
     await initialize();
 
@@ -116,7 +113,7 @@ class WordleWordRepo {
     return _cachedWords[index];
   }
 
-  // check if word is in dictionary
+  /// Evaluates whether the passed [word] exists in the internal dictionary.
   Future<bool> isValidWord(String word) async {
     await initialize();
 
@@ -187,12 +184,14 @@ class WordleWordRepo {
   }
 }
 
+/// Provides a singleton instance of [WordleWordRepo].
 final wordleWordRepoProvider = Provider<WordleWordRepo>((ref) {
   final repo = WordleWordRepo();
   repo.initialize();
   return repo;
 });
 
+/// Exposes a [Future] that completes when the dictionary is fully initialized.
 final wordleRepoReadyProvider = FutureProvider<bool>((ref) async {
   final repo = ref.watch(wordleWordRepoProvider);
   await repo.ready;

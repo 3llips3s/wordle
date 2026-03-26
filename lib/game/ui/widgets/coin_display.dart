@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:wordle/config/game_config/constants.dart';
 
+/// Renders the player's current coin balance.
+///
+/// Displays a gold coin emoji alongside the [coinCount]. Can optionally be
+/// wrapped in a stylized box if [useContainer] is true.
 class CoinDisplay extends StatelessWidget {
   final int coinCount;
   final bool useContainer;

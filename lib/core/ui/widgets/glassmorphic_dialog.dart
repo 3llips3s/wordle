@@ -3,6 +3,12 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:wordle/config/game_config/constants.dart';
 
+/// Renders an alert dialog overlaid with a frosted glassmorphism style.
+///
+/// This [Widget] displays the primary [child] content inside a blur-filtered,
+/// semi-transparent bordered container. Use [width] and [height] to explicitly
+/// size the resulting modal.
+
 class GlassmorphicDialog extends StatelessWidget {
   final Widget child;
   final double? height;
@@ -56,7 +62,6 @@ class GlassmorphicDialog extends StatelessWidget {
     return Stack(
       fit: height != null ? StackFit.expand : StackFit.loose,
       children: [
-        // blur effect
         Positioned.fill(
           child: ClipRRect(
             borderRadius: borderRadius,
@@ -70,7 +75,6 @@ class GlassmorphicDialog extends StatelessWidget {
           ),
         ),
 
-        // gradient
         Positioned.fill(
           child: Container(
             decoration: BoxDecoration(
@@ -88,7 +92,6 @@ class GlassmorphicDialog extends StatelessWidget {
           ),
         ),
 
-        // content
         Column(
           mainAxisSize: MainAxisSize.min,
           children: [

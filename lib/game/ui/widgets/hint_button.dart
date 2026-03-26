@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'package:wordle/config/game_config/constants.dart';
 
+/// Renders an interactive lightbulb icon to trigger hints.
+///
+/// Changes visually based on [isActive] status to indicate affordance.
 class HintButton extends StatelessWidget {
   final bool isActive;
   final bool useContainer;

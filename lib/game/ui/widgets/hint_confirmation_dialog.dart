@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:wordle/config/game_config/constants.dart';
 import 'package:wordle/core/ui/widgets/glassmorphic_dialog.dart';
 
+/// Renders a confirmation prompt before purchasing a hint.
+///
+/// Displays the [hintCost] and the player's [currentCoins] balance to explicitly
+/// warn the user before deducting currency.
 class HintConfirmationDialog extends StatelessWidget {
   final int hintNumber;
   final int hintCost;
@@ -23,7 +27,6 @@ class HintConfirmationDialog extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        // title
         Padding(
           padding: const EdgeInsets.only(top: 16),
           child: Row(
@@ -47,7 +50,6 @@ class HintConfirmationDialog extends StatelessWidget {
 
         const SizedBox(height: 32),
 
-        // current balance
         Text(
           'Verfügbar: $currentCoins',
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -58,11 +60,9 @@ class HintConfirmationDialog extends StatelessWidget {
 
         const SizedBox(height: 40),
 
-        // actions
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            // cancel
             GlassMorphicButton(
               onPressed: onCancel,
               padding: const EdgeInsets.all(12),
@@ -72,7 +72,6 @@ class HintConfirmationDialog extends StatelessWidget {
                 size: 30,
               ),
             ),
-            // confirm
             GlassMorphicButton(
               onPressed: onConfirm,
               padding: const EdgeInsets.all(12),

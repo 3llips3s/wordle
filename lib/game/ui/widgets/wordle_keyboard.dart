@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:wordle/config/game_config/constants.dart';
 
+/// Renders the on-screen virtual keyboard for letter input.
+///
+/// Handles tap events and visually indicates the guessed state of each letter
+/// using the provided [letterStates].
 class WordleKeyboard extends StatelessWidget {
   final Function(String)? onKeyTap;
   final Map<String, Color> letterStates;

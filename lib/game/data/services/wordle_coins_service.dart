@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/wordle_coins_model.dart';
 
+/// Manages retrieval and persistence of the user's coin economy.
 class WordleCoinsService {
   static const String _coinsKey = 'wordle_coins_data';
 
@@ -76,7 +77,7 @@ class WordleCoinsService {
 
       await _prefs!.setString(_coinsKey, json.encode(newData.toJson()));
     } catch (e) {
-      // silently fail
+      return;
     }
   }
 

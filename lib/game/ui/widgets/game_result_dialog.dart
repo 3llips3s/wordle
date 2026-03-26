@@ -6,6 +6,10 @@ import 'package:wordle/core/ui/widgets/glassmorphic_dialog.dart';
 import '../../data/models/wordle_game_state.dart';
 import '../../data/repositories/wordle_word_repo.dart';
 
+/// Renders the post-match summary and educational feedback modal.
+///
+/// Displays the game outcome, coin rewards, and allows the player to guess the
+/// German article for the target word to reinforce learning.
 class GameResultDialog extends ConsumerStatefulWidget {
   final WordleGameState gameState;
   final Animation<double> hoverAnimation;
@@ -35,7 +39,6 @@ class _GameResultDialogState extends ConsumerState<GameResultDialog> {
       _showingArticleResult = true;
     });
 
-    // fetch necessary futures
     final isCorrectFuture = ref
         .read(wordleGameStateProvider.notifier)
         .checkArticle(article);
@@ -70,7 +73,6 @@ class _GameResultDialogState extends ConsumerState<GameResultDialog> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // coins earned
           if (isWon && widget.gameState.coinsEarnedThisGame > 0)
             Padding(
               padding: const EdgeInsets.only(top: 20),
@@ -85,7 +87,6 @@ class _GameResultDialogState extends ConsumerState<GameResultDialog> {
               ),
             ),
 
-          // game result message
           Padding(
             padding: EdgeInsets.only(top: isWon ? 24 : 48),
             child: AnimatedBuilder(
@@ -134,7 +135,6 @@ class _GameResultDialogState extends ConsumerState<GameResultDialog> {
 
           const SizedBox(height: 80),
 
-          // target word display
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

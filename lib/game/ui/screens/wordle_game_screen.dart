@@ -19,6 +19,10 @@ import '../widgets/hint_button.dart';
 import '../widgets/wordle_instructions_dialog.dart';
 import '../widgets/wordle_keyboard.dart';
 
+/// Primary rendering surface for the active Wordle match.
+///
+/// Handles keyboard input, state orchestration, UI animations, and coordinates
+/// presentation dialogs for hints, instructions, and match results.
 class WordleGameScreen extends ConsumerStatefulWidget {
   const WordleGameScreen({super.key});
 
@@ -48,7 +52,6 @@ class _WordleGameScreenState extends ConsumerState<WordleGameScreen>
   }
 
   Future<void> _checkAndShowInstructions() async {
-    // Wait for entrance animations to finish before showing the dialog
     await Future.delayed(const Duration(milliseconds: 2500));
     if (!mounted) return;
     await WordleInstructionsManager.showInstructionsDialog(context);
@@ -119,21 +122,17 @@ class _WordleGameScreenState extends ConsumerState<WordleGameScreen>
     final gameState = ref.read(wordleGameStateProvider);
     if (gameState == null) return;
 
-    // build complete word including revealed letters
     String completeGuess = '';
     final currentGuessLetters = _currentGuess.split('');
     int typedLetterIndex = 0;
 
     for (int i = 0; i < 5; i++) {
       if (gameState.revealedPositions.contains(i)) {
-        // use revealed letter
         completeGuess += gameState.targetWord[i];
       } else if (typedLetterIndex < currentGuessLetters.length) {
-        // use next typed letter
         completeGuess += currentGuessLetters[typedLetterIndex];
         typedLetterIndex++;
       } else {
-        // position not filled
         completeGuess += ' ';
       }
     }
@@ -144,7 +143,6 @@ class _WordleGameScreenState extends ConsumerState<WordleGameScreen>
       return;
     }
 
-    // check if word is valid
     final repository = ref.read(wordleWordRepoProvider);
     final isValid = await repository.isValidWord(guess);
 

@@ -4,6 +4,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wordle/config/game_config/constants.dart';
 import 'package:wordle/core/ui/widgets/glassmorphic_dialog.dart';
 
+/// Renders the introductory tutorial modal explaining how to play.
+///
+/// Features a scrollable layout with animated semantic demonstrations of the
+/// game rules, and includes a persistent bottom-positioned confirmation button.
 class WordleInstructionsDialog extends StatelessWidget {
   final VoidCallback onClose;
 
@@ -36,7 +40,6 @@ class WordleInstructionsDialog extends StatelessWidget {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      // Title
                       Text(
                         'Wördle',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -47,7 +50,6 @@ class WordleInstructionsDialog extends StatelessWidget {
                       ),
                       const SizedBox(height: 24),
 
-                      // Instructions
                       Text(
                         'Errate das 5-Buchstaben Wort:',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -58,7 +60,6 @@ class WordleInstructionsDialog extends StatelessWidget {
                       ),
                       const SizedBox(height: 10),
 
-                      // Noun requirement rule with hint icon
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -82,10 +83,8 @@ class WordleInstructionsDialog extends StatelessWidget {
 
                       const SizedBox(height: 42),
 
-                      // Example tiles - in a Column (stacked vertically)
                       Column(
                         children: [
-                          // Correct position example
                           _buildExampleRow(
                             context: context,
                             letter: 'Z',
@@ -95,7 +94,6 @@ class WordleInstructionsDialog extends StatelessWidget {
                           ),
                           const SizedBox(height: 28),
 
-                          // Wrong position example
                           _buildExampleRow(
                             context: context,
                             letter: 'W',
@@ -105,7 +103,6 @@ class WordleInstructionsDialog extends StatelessWidget {
                           ),
                           const SizedBox(height: 28),
 
-                          // Not in word example
                           _buildExampleRow(
                             context: context,
                             letter: 'Ö',
@@ -160,7 +157,6 @@ class WordleInstructionsDialog extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
-            // Close button
             GlassMorphicButton(
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               onPressed: onClose,
@@ -180,7 +176,6 @@ class WordleInstructionsDialog extends StatelessWidget {
     );
   }
 
-  // Returns a Row with the tile and explanation side by side
   Widget _buildExampleRow({
     required BuildContext context,
     required String letter,
@@ -257,10 +252,10 @@ class WordleInstructionsDialog extends StatelessWidget {
   }
 }
 
+/// Orchestrates the conditional lifecycle of the [WordleInstructionsDialog].
 class WordleInstructionsManager {
   static const String _hasSeenInstructionsKey = 'has_seen_wordle_instructions';
 
-  // check if use has seen instructions
   static Future<bool> hasSeenInstructions() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getBool(_hasSeenInstructionsKey) ?? false;
@@ -271,7 +266,7 @@ class WordleInstructionsManager {
     await prefs.setBool(_hasSeenInstructionsKey, true);
   }
 
-  // show dialog
+  /// Evaluates SharedPreferences and triggers the instructional overlay if unread.
   static Future<bool> showInstructionsDialog(BuildContext context) async {
     if (await hasSeenInstructions()) return false;
 

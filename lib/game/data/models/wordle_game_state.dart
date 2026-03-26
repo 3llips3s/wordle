@@ -3,12 +3,14 @@ import 'package:wordle/game/data/models/guess_model.dart';
 
 import '../../logic/wordle_logic.dart';
 
+/// Represents the current lifecycle state of a match.
 enum GameStatus {
   playing,
   won,
   lost,
 }
 
+/// Maintains the state of an active game session.
 class WordleGameState {
   final String targetWord;
   final List<WordGuess> guesses;
@@ -17,7 +19,6 @@ class WordleGameState {
   final DateTime? endTime;
   final int maxAttempts;
 
-  // hints
   final int hintsUsed;
   final List<int> revealedPositions;
   final int coinsEarnedThisGame;
@@ -77,13 +78,13 @@ class WordleGameState {
   int get maxHints => 2;
 }
 
-// loading game state
+/// Asynchronously creates and exposes a fresh [WordleGameState].
 final wordleLoadingProvider = FutureProvider<WordleGameState>((ref) async {
   final gameLogic = ref.watch(wordleLogicProvider);
   return await gameLogic.createNewGame();
 });
 
-// state notifier for game state
+/// Manages game logic operations and updates the [WordleGameState].
 class WordleGameNotifier extends StateNotifier<WordleGameState?> {
   final WordleLogic _gameLogic;
 

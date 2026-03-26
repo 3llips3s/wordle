@@ -4,6 +4,10 @@ import 'package:wordle/game/ui/widgets/letter_tile.dart';
 
 import '../../data/models/wordle_game_state.dart';
 
+/// Renders the main 5x6 game board for Wordle.
+///
+/// Displays previous guesses, the current active guess, and remaining empty rows
+/// based on the current [gameState].
 class WordleGameGrid extends StatelessWidget {
   final WordleGameState gameState;
   final String currentGuess;
@@ -21,7 +25,6 @@ class WordleGameGrid extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // previous guesses
           ...List.generate(
             gameState.guesses.length,
             (index) {
@@ -30,10 +33,8 @@ class WordleGameGrid extends StatelessWidget {
             },
           ),
 
-          // current guess
           if (gameState.canGuess) _buildCurrentGuessRow(),
 
-          // empty rows for remaining attempts
           ...List.generate(
             gameState.remainingAttempts - (gameState.canGuess ? 1 : 0),
             (_) => _buildEmptyRow(),
@@ -69,11 +70,9 @@ class WordleGameGrid extends StatelessWidget {
         final isRevealed = gameState.revealedPositions.contains(index);
         String displayLetter = '';
 
-        // Debug logging (remove after testing)
         if (isRevealed) {
           displayLetter = gameState.targetWord[index];
         } else {
-          // use next available typed letter
           if (typedLetterIndex < currentGuessLetters.length) {
             displayLetter = currentGuessLetters[typedLetterIndex];
             typedLetterIndex++;

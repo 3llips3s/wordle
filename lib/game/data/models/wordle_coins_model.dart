@@ -1,3 +1,4 @@
+/// Represents the persisted state of the user's game economy.
 class WordleCoinsData {
   final int totalCoins;
   final int totalCoinsEarned;

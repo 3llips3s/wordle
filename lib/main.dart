@@ -9,6 +9,7 @@ Future<void> main() async {
   runApp(const ProviderScope(child: WordleApp()));
 }
 
+/// Serves as the root application structure and global theming entrypoint.
 class WordleApp extends StatelessWidget {
   const WordleApp({super.key});
 

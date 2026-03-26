@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:wordle/config/game_config/constants.dart';
 
+/// Renders a dynamic, spinning dual-circle progress indicator.
+///
+/// This custom [Widget] maintains an intrinsic size and centers itself.
+/// It animates two concentric circular indicators with shifting colors
+/// based on the [outerCircleColors] and [innerCircleColors].
+
 class DualProgressIndicator extends StatefulWidget {
   final double size;
   final List<Color> outerCircleColors;
@@ -36,11 +42,9 @@ class _DualProgressIndicatorState extends State<DualProgressIndicator>
   AnimationController? _outerController;
   AnimationController? _innerController;
 
-  // Color animations
   Animation<Color?>? _outerColorAnimation;
   Animation<Color?>? _innerColorAnimation;
 
-  // To keep track of color cycles
   int _outerColorCycle = 0;
   int _innerColorCycle = 0;
 
@@ -48,14 +52,12 @@ class _DualProgressIndicatorState extends State<DualProgressIndicator>
   void initState() {
     super.initState();
 
-    // Initialize outer circle controller and listener
     _outerController = AnimationController(
       duration: widget.outerRotationDuration,
       vsync: this,
     )
       ..addStatusListener((status) {
         if (status == AnimationStatus.completed) {
-          // When a rotation completes, increment the color cycle and reset controller
           setState(() {
             _outerColorCycle =
                 (_outerColorCycle + 1) % widget.outerCircleColors.length;
@@ -67,14 +69,12 @@ class _DualProgressIndicatorState extends State<DualProgressIndicator>
       })
       ..forward();
 
-    // Initialize inner circle controller and listener
     _innerController = AnimationController(
       duration: widget.innerRotationDuration,
       vsync: this,
     )
       ..addStatusListener((status) {
         if (status == AnimationStatus.completed) {
-          // When a rotation completes, increment the color cycle and reset controller
           setState(() {
             _innerColorCycle =
                 (_innerColorCycle + 1) % widget.innerCircleColors.length;
@@ -86,7 +86,6 @@ class _DualProgressIndicatorState extends State<DualProgressIndicator>
       })
       ..forward();
 
-    // Setup initial color animations
     _setupOuterColorAnimation();
     _setupInnerColorAnimation();
   }
@@ -154,7 +153,6 @@ class _DualProgressIndicatorState extends State<DualProgressIndicator>
       child: Stack(
         alignment: Alignment.center,
         children: <Widget>[
-          // Outer circle with color animation
           AnimatedBuilder(
             animation: _outerController!,
             builder: (context, child) {
@@ -181,7 +179,6 @@ class _DualProgressIndicatorState extends State<DualProgressIndicator>
             },
           ),
 
-          // Inner circle with color animation
           AnimatedBuilder(
             animation: _innerController!,
             builder: (context, child) {

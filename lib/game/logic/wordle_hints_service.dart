@@ -2,15 +2,15 @@ import 'dart:math';
 
 import '../data/models/wordle_game_state.dart';
 
+/// Provides utility functions for generating and costing hints.
 class WordleHintsService {
   static const int hint1Cost = 30;
   static const int hint2Cost = 50;
 
-  // return random unrevealed correct position,
+  /// Returns a random, unrevealed valid index from the active word.
   int getRandomHintPosition(WordleGameState gameState) {
     final targetWord = gameState.targetWord;
 
-    // get available positions (not revealed in previous hints)
     final availablePositions = <int>[];
     for (int i = 0; i < targetWord.length; i++) {
       if (!gameState.revealedPositions.contains(i)) {
@@ -18,7 +18,6 @@ class WordleHintsService {
       }
     }
 
-    // or -1 if none
     if (availablePositions.isEmpty) {
       return -1;
     }

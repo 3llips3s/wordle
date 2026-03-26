@@ -6,6 +6,10 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:wordle/config/game_config/constants.dart';
 import '../../data/models/guess_model.dart';
 
+/// Renders a single interactive letter tile on the game board.
+///
+/// Handles flip animations when evaluating a [match], and handles scale/shimmer
+/// animations when a tile [isRevealed] via a hint.
 class LetterTile extends StatefulWidget {
   final String letter;
   final LetterMatch? match;
@@ -47,7 +51,6 @@ class _LetterTileState extends State<LetterTile>
     );
 
     if (widget.match != null) {
-      // delay the animation based on the provided delay
       Future.delayed(
         widget.animationDelay,
         () {
@@ -63,7 +66,6 @@ class _LetterTileState extends State<LetterTile>
   void didUpdateWidget(LetterTile oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    // if the match changed, restart the animation
     if (widget.match != oldWidget.match && widget.match != null) {
       _showingBack = false;
       _controller.reset();
@@ -98,17 +100,14 @@ class _LetterTileState extends State<LetterTile>
 
   @override
   Widget build(BuildContext context) {
-    // empty tile
     if (widget.isEmpty) {
       return _buildEmptyTile();
     }
 
-    // current guess tile
     if (widget.isCurrentGuess) {
       return _buildCurrentGuessTile();
     }
 
-    // evaluated tile with animation
     if (widget.match != null) {
       return _buildAnimatedTile();
     }
@@ -158,13 +157,10 @@ class _LetterTileState extends State<LetterTile>
       builder: (context, child) {
         final value = _flipAnimation.value;
 
-        // flip content halfway through animation
         if (value >= 0.5 && !_showingBack) {
           _showingBack = true;
         }
 
-        // first half of animation: 0-90
-        // second half: 90-0 but showing back
         final rotation = value < 0.5 ? value * pi : (1 - value) * pi;
 
         return Transform(
