@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!--
+    If you are serving your web app in a path other than the root, change the
+    href value below to reflect the base path you are serving from.
+
+    The path provided below has to start and end with a slash "/" in order for
+    it to work correctly.
+
+    For more details:
+    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
+
+    This is a placeholder for base href that will be replaced by the value of
+    the `--base-href` argument provided to `flutter build`.
+  -->
+  <base href="$FLUTTER_BASE_HREF">
+
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="Wördle — guess the German noun in six tries.">
+
+  <!-- iOS meta tags & icons -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="Wördle">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png"/>
+
+  <title>Wördle</title>
+  <link rel="manifest" href="manifest.json">
+</head>
+<body>
+<!-- ─────────────────────────────────────────────────────────
+     WÖRDLE LOADING SCREEN
+     To reuse for another project, change ONLY:
+       • --loading-bg
+       • --color-1 through --color-5
+       • --shadow-rgb
+       • The .label text
+     Everything else stays identical across all projects.
+     ───────────────────────────────────────────────────────── -->
+<style>
+  /* =====================================================
+     THEME VARIABLES — only this block changes per project
+     ===================================================== */
+  :root {
+    /* Background — must match the Flutter scaffold colour exactly */
+    --loading-bg: #000000;       /* Wördle: pure black */
+
+    /* Box colour palette — gradient from darkest to lightest */
+    --color-1: #388e3c;          /* Colors.green[700] */
+    --color-2: #43a047;          /* Colors.green[600] */
+    --color-3: #4caf50;          /* Colors.green */
+    --color-4: #66bb6a;          /* Colors.green[400] */
+    --color-5: #81c784;          /* Colors.green[300] */
+
+    /* Shadow — RGB channels of --color-3, used as rgba(var(--shadow-rgb), opacity) */
+    --shadow-rgb: 76, 175, 80;   /* #4caf50 = rgb(76,175,80) */
+
+    /* Animation internals — DO NOT CHANGE for any project */
+    --duration: 3s;
+    --container-size: 250px;
+    --box-size: 33px;
+    --box-border-radius: 15%;
+  }
+
+  /* Loading screen wrapper */
+  #flutter-loading {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--loading-bg);
+    gap: 84px;
+    z-index: 9999;
+  }
+
+  #flutter-loading .label {
+    color: #ffffff;
+    font-family: sans-serif;
+    font-size: 1rem;
+    letter-spacing: 0.3em;
+    opacity: 0.8;
+  }
+
+  /* Box container */
+  .box-container {
+    width: var(--container-size);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+  }
+
+  /* Individual boxes */
+  .box {
+    width: var(--box-size);
+    height: var(--box-size);
+    position: relative;
+    display: block;
+    transform-origin: -50% center;
+    border-radius: var(--box-border-radius);
+    --anim: none;
+    animation: var(--anim) var(--duration) ease-in-out infinite alternate;
+  }
+
+  .box:after {
+    content: "";
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: var(--color-3);
+    border-radius: var(--box-border-radius);
+    --after-anim: none;
+    --shadow-logic: shadow-pulse;
+    animation:
+      var(--after-anim) var(--duration) ease-in-out infinite alternate,
+      var(--shadow-logic) var(--duration) ease-in-out infinite alternate;
+  }
+
+  /* Animation assignments — DO NOT CHANGE */
+  .box:nth-child(1) { --anim: slide; }
+  .box:nth-child(1):after {
+    --after-anim: color-change;
+    --shadow-logic: shadow-slide;
+  }
+
+  .box:nth-child(2) { --anim: flip-1; }
+  .box:nth-child(2):after { --after-anim: squidge-1; background-color: var(--color-2); }
+
+  .box:nth-child(3) { --anim: flip-2; }
+  .box:nth-child(3):after { --after-anim: squidge-2; background-color: var(--color-3); }
+
+  .box:nth-child(4) { --anim: flip-3; }
+  .box:nth-child(4):after { --after-anim: squidge-3; background-color: var(--color-4); }
+
+  .box:nth-child(5) { --anim: flip-4; }
+  .box:nth-child(5):after { --after-anim: squidge-4; background-color: var(--color-5); }
+
+  /* Colour keyframes */
+  @keyframes slide {
+    0%   { transform: translateX(0vw); }
+    100% { transform: translateX(calc(var(--container-size) - (var(--box-size) * 1.25))); }
+  }
+  @keyframes color-change {
+    0%   { background-color: var(--color-1); }
+    100% { background-color: var(--color-5); }
+  }
+
+  /* Shadow keyframes */
+  @keyframes shadow-slide {
+    0% {
+      box-shadow:
+        -8px 10px 15px rgba(var(--shadow-rgb), 0.2),
+        0 2px 4px rgba(255, 255, 255, 0.1) inset;
+    }
+    100% {
+      box-shadow:
+        8px 10px 15px rgba(var(--shadow-rgb), 0.2),
+        0 2px 4px rgba(255, 255, 255, 0.1) inset;
+    }
+  }
+  @keyframes shadow-pulse {
+    0% {
+      box-shadow:
+        8px 12px 18px rgba(var(--shadow-rgb), 0.15),
+        0 2px 4px rgba(255, 255, 255, 0.15) inset;
+      transform: translateY(-3px);
+    }
+    100% {
+      box-shadow:
+        4px 4px 10px rgba(var(--shadow-rgb), 0.3),
+        0 1px 2px rgba(255, 255, 255, 0.05) inset;
+      transform: translateY(0px);
+    }
+  }
+
+  /* ── Timing keyframes — DO NOT CHANGE for any project ── */
+  @keyframes flip-1 {
+    0%, 15%   { transform: rotate(0); }
+    35%, 100% { transform: rotate(-180deg); }
+  }
+  @keyframes squidge-1 {
+    5%        { transform-origin: center bottom; transform: scale(1,1); }
+    15%       { transform-origin: center bottom; transform: scale(1.3,0.7); }
+    20%, 25%  { transform-origin: center bottom; transform: scale(0.8,1.4); }
+    40%       { transform-origin: center top;    transform: scale(1.3,0.7); }
+    55%, 100% { transform-origin: center top;    transform: scale(1,1); }
+  }
+  @keyframes flip-2 {
+    0%, 30%   { transform: rotate(0); }
+    50%, 100% { transform: rotate(-180deg); }
+  }
+  @keyframes squidge-2 {
+    20%       { transform-origin: center bottom; transform: scale(1,1); }
+    30%       { transform-origin: center bottom; transform: scale(1.3,0.7); }
+    35%, 40%  { transform-origin: center bottom; transform: scale(0.8,1.4); }
+    55%       { transform-origin: center top;    transform: scale(1.3,0.7); }
+    70%, 100% { transform-origin: center top;    transform: scale(1,1); }
+  }
+  @keyframes flip-3 {
+    0%, 45%   { transform: rotate(0); }
+    65%, 100% { transform: rotate(-180deg); }
+  }
+  @keyframes squidge-3 {
+    35%       { transform-origin: center bottom; transform: scale(1,1); }
+    45%       { transform-origin: center bottom; transform: scale(1.3,0.7); }
+    50%, 55%  { transform-origin: center bottom; transform: scale(0.8,1.4); }
+    70%       { transform-origin: center top;    transform: scale(1.3,0.7); }
+    85%, 100% { transform-origin: center top;    transform: scale(1,1); }
+  }
+  @keyframes flip-4 {
+    0%, 60%   { transform: rotate(0); }
+    80%, 100% { transform: rotate(-180deg); }
+  }
+  @keyframes squidge-4 {
+    50%        { transform-origin: center bottom; transform: scale(1,1); }
+    60%        { transform-origin: center bottom; transform: scale(1.3,0.7); }
+    65%, 70%   { transform-origin: center bottom; transform: scale(0.8,1.4); }
+    85%        { transform-origin: center top;    transform: scale(1.3,0.7); }
+    100%       { transform-origin: center top;    transform: scale(1,1); }
+  }
+</style>
+
+<div id="flutter-loading">
+  <div class="box-container">
+    <div class="box"></div>
+    <div class="box"></div>
+    <div class="box"></div>
+    <div class="box"></div>
+    <div class="box"></div>
+  </div>
+  <div class="label">WÖRDLE</div>
+</div>
+
+<script>
+  window.addEventListener('flutter-first-frame', function () {
+    const loader = document.getElementById('flutter-loading');
+    if (loader) {
+      loader.style.transition = 'opacity 0.3s ease';
+      loader.style.opacity = '0';
+      setTimeout(() => loader.remove(), 300);
+    }
+  });
+</script>
+
+  <script src="flutter_bootstrap.js" async></script>
+</body>
+</html>
