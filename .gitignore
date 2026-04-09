@@ -53,3 +53,8 @@ brain/
 
 # Environment
 .env*
+
+# Guide & Agent files
+*guide*
+*agent*
+
