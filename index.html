@@ -33,41 +33,22 @@
   <link rel="manifest" href="manifest.json">
 </head>
 <body>
-<!-- ─────────────────────────────────────────────────────────
-     WÖRDLE LOADING SCREEN
-     To reuse for another project, change ONLY:
-       • --loading-bg
-       • --color-1 through --color-5
-       • --shadow-rgb
-       • The .label text
-     Everything else stays identical across all projects.
-     ───────────────────────────────────────────────────────── -->
 <style>
-  /* =====================================================
-     THEME VARIABLES — only this block changes per project
-     ===================================================== */
   :root {
-    /* Background — must match the Flutter scaffold colour exactly */
-    --loading-bg: #000000;       /* Wördle: pure black */
+    --loading-bg: #000000;
+    --color-1: #388e3c;
+    --color-2: #43a047;
+    --color-3: #4caf50;
+    --color-4: #66bb6a;
+    --color-5: #81c784;
+    --shadow-rgb: 76, 175, 80;
 
-    /* Box colour palette — gradient from darkest to lightest */
-    --color-1: #388e3c;          /* Colors.green[700] */
-    --color-2: #43a047;          /* Colors.green[600] */
-    --color-3: #4caf50;          /* Colors.green */
-    --color-4: #66bb6a;          /* Colors.green[400] */
-    --color-5: #81c784;          /* Colors.green[300] */
-
-    /* Shadow — RGB channels of --color-3, used as rgba(var(--shadow-rgb), opacity) */
-    --shadow-rgb: 76, 175, 80;   /* #4caf50 = rgb(76,175,80) */
-
-    /* Animation internals — DO NOT CHANGE for any project */
     --duration: 3s;
     --container-size: 250px;
     --box-size: 33px;
     --box-border-radius: 15%;
   }
 
-  /* Loading screen wrapper */
   #flutter-loading {
     position: fixed;
     inset: 0;
@@ -88,7 +69,6 @@
     opacity: 0.8;
   }
 
-  /* Box container */
   .box-container {
     width: var(--container-size);
     display: flex;
@@ -97,7 +77,6 @@
     position: relative;
   }
 
-  /* Individual boxes */
   .box {
     width: var(--box-size);
     height: var(--box-size);
@@ -125,7 +104,6 @@
       var(--shadow-logic) var(--duration) ease-in-out infinite alternate;
   }
 
-  /* Animation assignments — DO NOT CHANGE */
   .box:nth-child(1) { --anim: slide; }
   .box:nth-child(1):after {
     --after-anim: color-change;
@@ -144,7 +122,6 @@
   .box:nth-child(5) { --anim: flip-4; }
   .box:nth-child(5):after { --after-anim: squidge-4; background-color: var(--color-5); }
 
-  /* Colour keyframes */
   @keyframes slide {
     0%   { transform: translateX(0vw); }
     100% { transform: translateX(calc(var(--container-size) - (var(--box-size) * 1.25))); }
@@ -154,7 +131,6 @@
     100% { background-color: var(--color-5); }
   }
 
-  /* Shadow keyframes */
   @keyframes shadow-slide {
     0% {
       box-shadow:
@@ -182,7 +158,6 @@
     }
   }
 
-  /* ── Timing keyframes — DO NOT CHANGE for any project ── */
   @keyframes flip-1 {
     0%, 15%   { transform: rotate(0); }
     35%, 100% { transform: rotate(-180deg); }
