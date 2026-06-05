@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -306,9 +307,48 @@ class _WordleGameScreenState extends ConsumerState<WordleGameScreen>
       );
     }
 
-    return Scaffold(
-      backgroundColor: colorBlack,
-      body: SafeArea(
+    return Focus(
+      autofocus: true,
+      onKeyEvent: (node, event) {
+        if (event is KeyDownEvent) {
+          if (event.logicalKey == LogicalKeyboardKey.enter ||
+              event.logicalKey == LogicalKeyboardKey.numpadEnter) {
+            if (gameState.canGuess) _handleKeyPress('✓');
+            return KeyEventResult.handled;
+          } else if (event.logicalKey == LogicalKeyboardKey.backspace ||
+                     event.logicalKey == LogicalKeyboardKey.delete) {
+            if (gameState.canGuess) _handleKeyPress('←');
+            return KeyEventResult.handled;
+          } else {
+            String? char = event.character;
+            if (char != null) {
+              if (char != 'ß') {
+                char = char.toUpperCase();
+              }
+              if (RegExp(r'^[A-ZÜÖÄß]$').hasMatch(char)) {
+                if (gameState.canGuess) _handleKeyPress(char);
+                return KeyEventResult.handled;
+              }
+            } else {
+              // Fallback to logicalKey keyLabel
+              String label = event.logicalKey.keyLabel;
+              if (label.length == 1) {
+                if (label != 'ß') {
+                  label = label.toUpperCase();
+                }
+                if (RegExp(r'^[A-ZÜÖÄß]$').hasMatch(label)) {
+                  if (gameState.canGuess) _handleKeyPress(label);
+                  return KeyEventResult.handled;
+                }
+              }
+            }
+          }
+        }
+        return KeyEventResult.ignored;
+      },
+      child: Scaffold(
+        backgroundColor: colorBlack,
+        body: SafeArea(
         child: Column(
           children: [
             const Spacer(flex: 1),
@@ -490,7 +530,7 @@ class _WordleGameScreenState extends ConsumerState<WordleGameScreen>
           ],
         ),
       ),
-    );
+    ));
   }
 
   @override
